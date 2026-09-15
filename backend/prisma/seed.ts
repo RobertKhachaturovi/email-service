@@ -40,6 +40,32 @@ async function main() {
       create: candidate,
     });
   }
+
+  const mockTemplates = [
+    {
+      name: 'Job Opportunity',
+      subject: 'Opportunity for {{firstName}} - {{projectTitle}}',
+      body: 'Hi {{firstName}},\n\nWe were impressed by your background and would love to discuss the {{projectTitle}} role with you.\n\nBest regards,\nRecruiting Team',
+    },
+    {
+      name: 'Interview Invitation',
+      subject: 'Interview Invitation for {{firstName}}',
+      body: 'Dear {{firstName}},\n\nWe would like to invite you to an interview for the {{projectTitle}} position.\n\nBest regards,\nRecruiting Team',
+    },
+  ];
+
+  console.log('Seeding mock email templates...');
+  for (const template of mockTemplates) {
+    await prisma.emailTemplate.upsert({
+      where: { name: template.name },
+      update: {
+        subject: template.subject,
+        body: template.body,
+      },
+      create: template,
+    });
+  }
+
   console.log('Seeding completed successfully.');
 }
 
