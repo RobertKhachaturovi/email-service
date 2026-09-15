@@ -6,6 +6,7 @@ import { GmailModule } from './gmail/gmail.module';
 import { CandidatesModule } from './candidates/candidates.module';
 import { EmailTemplatesModule } from './email-templates/email-templates.module';
 import { EmailPreviewModule } from './email-preview/email-preview.module';
+import { EmailsModule } from './emails/emails.module';
 
 @Module({
   imports: [
@@ -14,8 +15,10 @@ import { EmailPreviewModule } from './email-preview/email-preview.module';
     CandidatesModule,
     EmailTemplatesModule,
     EmailPreviewModule,
+    EmailsModule,
   ],
   controllers: [AppController],
   providers: [AppService],
 })
 export class AppModule {}
+
