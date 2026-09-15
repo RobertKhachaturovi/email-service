@@ -1,13 +1,19 @@
-import { Controller, Post, Body } from '@nestjs/common';
+import { Controller, Post, Param, Body } from '@nestjs/common';
 import { EmailPreviewService } from './email-preview.service';
-import { CreateEmailPreviewDto } from './dto/create-email-preview.dto';
+import { PreviewEmailTemplateDto } from './dto/preview-email-template.dto';
 
-@Controller('email-preview')
+@Controller('email-templates')
 export class EmailPreviewController {
   constructor(private readonly emailPreviewService: EmailPreviewService) {}
 
-  @Post()
-  generatePreview(@Body() createEmailPreviewDto: CreateEmailPreviewDto) {
-    return this.emailPreviewService.generatePreview(createEmailPreviewDto);
+  @Post(':id/preview')
+  generatePreview(
+    @Param('id') templateId: string,
+    @Body() dto: PreviewEmailTemplateDto,
+  ) {
+    return this.emailPreviewService.generatePreview(
+      templateId,
+      dto.candidateId,
+    );
   }
 }

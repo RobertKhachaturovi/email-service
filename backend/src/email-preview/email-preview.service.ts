@@ -1,34 +1,40 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
-import { CreateEmailPreviewDto } from './dto/create-email-preview.dto';
 
 @Injectable()
 export class EmailPreviewService {
   constructor(private readonly prisma: PrismaService) {}
 
-  async generatePreview(dto: CreateEmailPreviewDto) {
-    const candidate = await this.prisma.candidate.findUnique({
-      where: { id: dto.candidateId },
-    });
-
-    if (!candidate) {
-      throw new NotFoundException(
-        `Candidate with ID "${dto.candidateId}" not found`,
-      );
-    }
-
+  async generatePreview(templateId: string, candidateId: string) {
     const template = await this.prisma.emailTemplate.findUnique({
-      where: { id: dto.templateId },
+      where: { id: templateId },
     });
 
     if (!template) {
       throw new NotFoundException(
-        `Email template with ID "${dto.templateId}" not found`,
+        `Email template with ID "${templateId}" not found`,
       );
     }
 
+    const candidate = await this.prisma.candidate.findUnique({
+      where: { id: candidateId },
+    });
+
+    if (!candidate) {
+      throw new NotFoundException(
+        `Candidate with ID "${candidateId}" not found`,
+      );
+    }
+
+    const effectiveFirstName =
+      candidate.firstName && candidate.firstName.trim() !== ''
+        ? candidate.firstName
+        : candidate.fullName && candidate.fullName.trim() !== ''
+          ? candidate.fullName.trim().split(/\s+/)[0]
+          : undefined;
+
     const variableMap: Record<string, string | undefined> = {
-      firstName: candidate.firstName,
+      firstName: effectiveFirstName,
       lastName: candidate.lastName,
       fullName: candidate.fullName,
       email: candidate.email,
@@ -50,11 +56,13 @@ export class EmailPreviewService {
 
     const renderedSubject = replaceVariables(template.subject);
     const renderedBody = replaceVariables(template.body);
+    const missingVariables = Array.from(missingVariablesSet);
 
     return {
       subject: renderedSubject,
       body: renderedBody,
-      missingVariables: Array.from(missingVariablesSet),
+      ready: missingVariables.length === 0,
+      missingVariables,
     };
   }
 }
