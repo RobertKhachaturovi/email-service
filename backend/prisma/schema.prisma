@@ -9,6 +9,11 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+enum EmailStatus {
+  SENT
+  FAILED
+}
+
 model GmailConnection {
   id           String   @id @default(uuid())
   userId       String   @unique
@@ -25,25 +30,47 @@ model GmailConnection {
 }
 
 model Candidate {
-  id           String   @id @default(uuid())
+  id           String      @id @default(uuid())
   firstName    String
   lastName     String
   fullName     String
-  email        String   @unique
+  email        String      @unique
   projectTitle String
-  createdAt    DateTime @default(now())
-  updatedAt    DateTime @updatedAt
+  createdAt    DateTime    @default(now())
+  updatedAt    DateTime    @updatedAt
+  sentEmails   SentEmail[]
 
   @@map("candidates")
 }
 
 model EmailTemplate {
-  id        String   @id @default(uuid())
-  name      String   @unique
-  subject   String
-  body      String
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id         String      @id @default(uuid())
+  name       String      @unique
+  subject    String
+  body       String
+  createdAt  DateTime    @default(now())
+  updatedAt  DateTime    @updatedAt
+  sentEmails SentEmail[]
 
   @@map("email_templates")
+}
+
+model SentEmail {
+  id                String        @id @default(uuid())
+  candidateId       String
+  templateId        String
+  fromEmail         String
+  toEmail           String
+  subject           String
+  body              String
+  status            EmailStatus
+  providerMessageId String?
+  errorMessage      String?
+  createdAt         DateTime      @default(now())
+  updatedAt         DateTime      @updatedAt
+
+  candidate         Candidate     @relation(fields: [candidateId], references: [id], onDelete: Cascade)
+  template          EmailTemplate @relation(fields: [templateId], references: [id], onDelete: Cascade)
+
+  @@map("sent_emails")
 }
