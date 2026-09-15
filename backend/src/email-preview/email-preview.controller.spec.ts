@@ -8,6 +8,7 @@ describe('EmailPreviewController', () => {
   const mockPreviewResult = {
     subject: 'Opportunity for Anna',
     body: 'Привет, Anna!',
+    ready: true,
     missingVariables: [],
   };
 
@@ -32,12 +33,16 @@ describe('EmailPreviewController', () => {
   });
 
   describe('generatePreview', () => {
-    it('should delegate preview generation to service', async () => {
-      const dto = { candidateId: 'cand-123', templateId: 'tmpl-456' };
-      const result = await controller.generatePreview(dto);
+    it('should delegate preview generation to service with templateId from param and candidateId from body', async () => {
+      const templateId = 'tmpl-456';
+      const dto = { candidateId: 'cand-123' };
+      const result = await controller.generatePreview(templateId, dto);
 
       expect(result).toEqual(mockPreviewResult);
-      expect(mockService.generatePreview).toHaveBeenCalledWith(dto);
+      expect(mockService.generatePreview).toHaveBeenCalledWith(
+        templateId,
+        dto.candidateId,
+      );
     });
   });
 });
