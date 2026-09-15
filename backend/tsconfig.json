@@ -14,6 +14,8 @@
     "types": ["node", "jest"],
     "sourceMap": true,
     "outDir": "./dist",
+    "rootDir": "./",
+    "allowJs": true,
     "incremental": true,
     "skipLibCheck": true,
     "strict": true,
