@@ -8,3 +8,18 @@ datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
 }
+
+model GmailConnection {
+  id           String   @id @default(uuid())
+  userId       String   @unique
+  email        String
+  accessToken  String
+  refreshToken String?
+  tokenType    String?
+  scope        String?
+  expiryDate   BigInt?
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  @@map("gmail_connections")
+}
