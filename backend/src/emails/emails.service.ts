@@ -85,10 +85,15 @@ export class EmailsService {
     }
 
     // 5. Construct MIME message
+    const isNonAsciiSubject = /[^\x00-\x7F]/.test(preview.subject);
+    const mimeSubject = isNonAsciiSubject
+      ? `=?utf-8?B?${Buffer.from(preview.subject, 'utf-8').toString('base64')}?=`
+      : preview.subject;
+
     const messageParts = [
       `From: ${connection.email}`,
       `To: ${candidate.email}`,
-      `Subject: ${preview.subject}`,
+      `Subject: ${mimeSubject}`,
       'Content-Type: text/plain; charset=utf-8',
       'MIME-Version: 1.0',
       '',

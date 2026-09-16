@@ -37,7 +37,7 @@ export class GmailController {
   async callback(
     @Query('code') code: string,
     @Query('state') state: string,
-    @Query('error') error: string,
+    @Query('error') error?: string,
   ) {
     if (error) {
       throw new BadRequestException(`Google OAuth error: ${error}`);

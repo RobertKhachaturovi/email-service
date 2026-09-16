@@ -5,10 +5,10 @@ const prisma = new PrismaClient();
 async function main() {
   const mockCandidates = [
     {
-      firstName: 'Alice',
-      lastName: 'Smith',
-      fullName: 'Alice Smith',
-      email: 'alice.smith@example.com',
+      firstName: 'Robert',
+      lastName: 'Khachaturov',
+      fullName: 'Robert Khachaturov',
+      email: 'Khachaturovir@gmail.com',
       projectTitle: 'Senior Frontend Engineer',
     },
     {
@@ -43,14 +43,16 @@ async function main() {
 
   const mockTemplates = [
     {
-      name: 'Job Opportunity',
-      subject: 'Opportunity for {{firstName}} - {{projectTitle}}',
-      body: 'Hi {{firstName}},\n\nWe were impressed by your background and would love to discuss the {{projectTitle}} role with you.\n\nBest regards,\nRecruiting Team',
-    },
-    {
-      name: 'Interview Invitation',
-      subject: 'Interview Invitation for {{firstName}}',
-      body: 'Dear {{firstName}},\n\nWe would like to invite you to an interview for the {{projectTitle}} position.\n\nBest regards,\nRecruiting Team',
+      name: 'Предложение о работе',
+      subject: 'Вакансия Frontend Developer — {{projectTitle}}',
+      body: `Здравствуйте, {{firstName}}!
+
+Я ознакомился с вашим профилем и хотел бы связаться с вами по поводу позиции {{projectTitle}}.
+
+Буду рад рассказать подробнее о вакансии и обсудить возможные детали сотрудничества.
+
+С уважением,
+Robert`,
     },
   ];
 
