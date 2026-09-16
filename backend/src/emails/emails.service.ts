@@ -44,7 +44,6 @@ export class EmailsService {
   }
 
   async sendEmail(dto: SendEmailDto, userId: string = 'default-user') {
-    // 1. Find Candidate
     const candidate = await this.prisma.candidate.findUnique({
       where: { id: dto.candidateId },
     });
@@ -54,7 +53,6 @@ export class EmailsService {
       );
     }
 
-    // 2. Find EmailTemplate
     const template = await this.prisma.emailTemplate.findUnique({
       where: { id: dto.templateId },
     });
@@ -64,7 +62,6 @@ export class EmailsService {
       );
     }
 
-    // 3. Find connected Gmail account
     const connection = await this.prisma.gmailConnection.findUnique({
       where: { userId },
     });
@@ -72,7 +69,6 @@ export class EmailsService {
       throw new BadRequestException('Gmail account is not connected');
     }
 
-    // 4. Render template using EmailPreviewService
     const preview = await this.emailPreviewService.generatePreview(
       dto.templateId,
       dto.candidateId,
@@ -84,7 +80,6 @@ export class EmailsService {
       );
     }
 
-    // 5. Construct MIME message
     const isNonAsciiSubject = /[^\x00-\x7F]/.test(preview.subject);
     const mimeSubject = isNonAsciiSubject
       ? `=?utf-8?B?${Buffer.from(preview.subject, 'utf-8').toString('base64')}?=`
@@ -106,7 +101,6 @@ export class EmailsService {
       .replace(/\//g, '_')
       .replace(/=+$/, '');
 
-    // 6. Send email via Gmail API
     const oauth2Client = this.getOAuth2Client(
       connection.accessToken,
       connection.refreshToken,
@@ -128,7 +122,6 @@ export class EmailsService {
       sendError = err;
     }
 
-    // 7. Handle Gmail API failure
     if (sendError || !providerMessageId) {
       const safeErrorMessage = sendError?.message || 'Failed to send email via Gmail API';
       
@@ -155,7 +148,6 @@ export class EmailsService {
       );
     }
 
-    // 8. Handle Gmail API success & DB persistence
     try {
       const sentEmail = await this.prisma.sentEmail.create({
         data: {
