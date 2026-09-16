@@ -3,77 +3,98 @@ import { PrismaClient } from '@prisma/client';
 const prisma = new PrismaClient();
 
 async function main() {
-  const mockCandidates = [
+  console.log('--- Step 1: Clearing all existing table records ---');
+  const deletedSentEmails = await prisma.sentEmail.deleteMany();
+  console.log(`Deleted SentEmail records: ${deletedSentEmails.count}`);
+
+  const deletedCandidates = await prisma.candidate.deleteMany();
+  console.log(`Deleted Candidate records: ${deletedCandidates.count}`);
+
+  const deletedEmailTemplates = await prisma.emailTemplate.deleteMany();
+  console.log(`Deleted EmailTemplate records: ${deletedEmailTemplates.count}`);
+
+  const deletedGmailConnections = await prisma.gmailConnection.deleteMany();
+  console.log(`Deleted GmailConnection records: ${deletedGmailConnections.count}`);
+
+  console.log('\n--- Step 2: Seeding 3 Candidates ---');
+  const candidatesData = [
     {
       firstName: 'Robert',
-      lastName: 'Khachaturov',
-      fullName: 'Robert Khachaturov',
+      lastName: 'Khachaturovi',
+      fullName: 'Robert Khachaturovi',
       email: 'Khachaturovir@gmail.com',
-      projectTitle: 'Senior Frontend Engineer',
+      projectTitle: 'Email Service',
     },
     {
-      firstName: 'Bob',
-      lastName: 'Johnson',
-      fullName: 'Bob Johnson',
-      email: 'bob.johnson@example.com',
-      projectTitle: 'Backend Node.js Developer',
+      firstName: 'Anna',
+      lastName: 'Ivanova',
+      fullName: 'Anna Ivanova',
+      email: 'anna.ivanova@example.com',
+      projectTitle: 'Frontend Developer',
     },
     {
-      firstName: 'Carol',
-      lastName: 'Williams',
-      fullName: 'Carol Williams',
-      email: 'carol.williams@example.com',
-      projectTitle: 'Full Stack Engineer',
+      firstName: 'David',
+      lastName: 'Smith',
+      fullName: 'David Smith',
+      email: 'david.smith@example.com',
+      projectTitle: 'Software Engineer',
     },
   ];
 
-  console.log('Seeding mock candidates...');
-  for (const candidate of mockCandidates) {
-    await prisma.candidate.upsert({
-      where: { email: candidate.email },
-      update: {
-        firstName: candidate.firstName,
-        lastName: candidate.lastName,
-        fullName: candidate.fullName,
-        projectTitle: candidate.projectTitle,
-      },
-      create: candidate,
+  for (const candidate of candidatesData) {
+    await prisma.candidate.create({
+      data: candidate,
     });
   }
+  console.log(`Created Candidates: ${candidatesData.length}`);
 
-  const mockTemplates = [
+  console.log('\n--- Step 3: Seeding 3 EmailTemplates ---');
+  const templatesData = [
     {
-      name: 'Предложение о работе',
-      subject: 'Вакансия Frontend Developer — {{projectTitle}}',
-      body: `Здравствуйте, {{firstName}}!
+      name: 'Interview Invitation',
+      subject: 'Interview Invitation for {{firstName}}',
+      body: `Dear {{firstName}},
 
-Я ознакомился с вашим профилем и хотел бы связаться с вами по поводу позиции {{projectTitle}}.
+You are invited to an interview for the position of {{projectTitle}}.
 
-Буду рад рассказать подробнее о вакансии и обсудить возможные детали сотрудничества.
+Best regards,
+Recruiting Team`,
+    },
+    {
+      name: 'Project Update',
+      subject: 'Update Regarding {{projectTitle}}',
+      body: `Hello {{firstName}},
 
-С уважением,
-Robert`,
+We have an update regarding your application for the {{projectTitle}} position.
+
+Best regards,
+Recruiting Team`,
+    },
+    {
+      name: 'Welcome Email',
+      subject: 'Welcome to the {{projectTitle}} Team',
+      body: `Welcome {{firstName}}!
+
+We are excited to welcome you to the {{projectTitle}} team.
+
+Best regards,
+Recruiting Team`,
     },
   ];
 
-  console.log('Seeding mock email templates...');
-  for (const template of mockTemplates) {
-    await prisma.emailTemplate.upsert({
-      where: { name: template.name },
-      update: {
-        subject: template.subject,
-        body: template.body,
-      },
-      create: template,
+  for (const template of templatesData) {
+    await prisma.emailTemplate.create({
+      data: template,
     });
   }
+  console.log(`Created EmailTemplates: ${templatesData.length}`);
 
-  console.log('Seeding completed successfully.');
+  console.log('\n--- Database Reset & Seed Completed Successfully ---');
 }
 
 main()
   .catch((e) => {
-    console.error('Error during database seeding:', e);
+    console.error('Error during database reset/seed:', e);
     process.exit(1);
   })
   .finally(async () => {
