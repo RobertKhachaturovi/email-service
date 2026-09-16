@@ -13,7 +13,7 @@ export default function TemplateList() {
     setError(null);
     try {
       const data = await getEmailTemplates();
-      setTemplates(data);
+      setTemplates(Array.isArray(data) ? data : []);
     } catch (err: unknown) {
       if (err instanceof ApiError) {
         setError(err.message);
@@ -34,7 +34,7 @@ export default function TemplateList() {
       try {
         const data = await getEmailTemplates();
         if (isMounted) {
-          setTemplates(data);
+          setTemplates(Array.isArray(data) ? data : []);
           setError(null);
         }
       } catch (err: unknown) {

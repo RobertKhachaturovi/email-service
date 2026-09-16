@@ -13,7 +13,7 @@ export default function CandidateList() {
     setError(null);
     try {
       const data = await getCandidates();
-      setCandidates(data);
+      setCandidates(Array.isArray(data) ? data : []);
     } catch (err: unknown) {
       if (err instanceof ApiError) {
         setError(err.message);
@@ -34,7 +34,7 @@ export default function CandidateList() {
       try {
         const data = await getCandidates();
         if (isMounted) {
-          setCandidates(data);
+          setCandidates(Array.isArray(data) ? data : []);
           setError(null);
         }
       } catch (err: unknown) {
