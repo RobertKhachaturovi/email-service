@@ -33,11 +33,14 @@ export interface EmailPreview {
 
 export interface SentEmail {
   id: string;
-  status: string;
-  providerMessageId?: string | null;
-  fromEmail: string;
   toEmail: string;
+  recipientName?: string;
+  templateName?: string;
   subject: string;
+  status: string;
+  createdAt?: string;
+  providerMessageId?: string | null;
+  fromEmail?: string;
 }
 
 export interface ApiResponse<T> {

@@ -10,5 +10,6 @@ export {
   getEmailTemplates,
   previewEmail,
   sendEmail,
+  getEmailHistory,
 } from './endpoints';
 export type * from '../../types/api';

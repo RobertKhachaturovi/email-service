@@ -52,3 +52,8 @@ export async function sendEmail(
     templateId,
   });
 }
+
+export async function getEmailHistory(): Promise<SentEmail[]> {
+  return apiClient.get<SentEmail[]>('/emails');
+}
+
