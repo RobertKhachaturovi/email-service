@@ -7,6 +7,7 @@ const navItems = [
   { label: 'Dashboard', href: '/' },
   { label: 'Candidates', href: '/candidates' },
   { label: 'Templates', href: '/templates' },
+  { label: 'History', href: '/history' },
 ];
 
 export default function Navbar() {
