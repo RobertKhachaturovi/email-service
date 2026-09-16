@@ -3,9 +3,9 @@ import { IsNotEmpty, IsString } from 'class-validator';
 export class SendEmailDto {
   @IsString()
   @IsNotEmpty()
-  candidateId: string;
+  candidateId!: string;
 
   @IsString()
   @IsNotEmpty()
-  templateId: string;
+  templateId!: string;
 }
