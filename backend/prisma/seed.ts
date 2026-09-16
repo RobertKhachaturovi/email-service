@@ -3,20 +3,13 @@ import { PrismaClient } from '@prisma/client';
 const prisma = new PrismaClient();
 
 async function main() {
-  console.log('--- Step 1: Clearing all existing table records ---');
-  const deletedSentEmails = await prisma.sentEmail.deleteMany();
-  console.log(`Deleted SentEmail records: ${deletedSentEmails.count}`);
+  console.log('Clearing existing data...');
+  await prisma.sentEmail.deleteMany();
+  await prisma.candidate.deleteMany();
+  await prisma.emailTemplate.deleteMany();
+  await prisma.gmailConnection.deleteMany();
 
-  const deletedCandidates = await prisma.candidate.deleteMany();
-  console.log(`Deleted Candidate records: ${deletedCandidates.count}`);
-
-  const deletedEmailTemplates = await prisma.emailTemplate.deleteMany();
-  console.log(`Deleted EmailTemplate records: ${deletedEmailTemplates.count}`);
-
-  const deletedGmailConnections = await prisma.gmailConnection.deleteMany();
-  console.log(`Deleted GmailConnection records: ${deletedGmailConnections.count}`);
-
-  console.log('\n--- Step 2: Seeding 3 Candidates ---');
+  console.log('Seeding candidates...');
   const candidatesData = [
     {
       firstName: 'Robert',
@@ -46,9 +39,8 @@ async function main() {
       data: candidate,
     });
   }
-  console.log(`Created Candidates: ${candidatesData.length}`);
 
-  console.log('\n--- Step 3: Seeding 3 EmailTemplates ---');
+  console.log('Seeding email templates...');
   const templatesData = [
     {
       name: 'Interview Invitation',
@@ -87,14 +79,13 @@ Recruiting Team`,
       data: template,
     });
   }
-  console.log(`Created EmailTemplates: ${templatesData.length}`);
 
-  console.log('\n--- Database Reset & Seed Completed Successfully ---');
+  console.log('Database seeding completed.');
 }
 
 main()
   .catch((e) => {
-    console.error('Error during database reset/seed:', e);
+    console.error('Error during database seed:', e);
     process.exit(1);
   })
   .finally(async () => {
