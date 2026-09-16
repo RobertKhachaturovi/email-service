@@ -77,6 +77,7 @@ describe('EmailsService', () => {
     },
     sentEmail: {
       create: jest.fn(),
+      findMany: jest.fn(),
     },
   };
 
@@ -260,4 +261,83 @@ describe('EmailsService', () => {
       ).rejects.toThrow(InternalServerErrorException);
     });
   });
+
+  describe('getEmailHistory', () => {
+    it('should return empty array { data: [] } when no sent email records exist', async () => {
+      mockPrisma.sentEmail.findMany.mockResolvedValue([]);
+
+      const result = await service.getEmailHistory('default-user');
+
+      expect(mockPrisma.sentEmail.findMany).toHaveBeenCalledWith({
+        orderBy: { createdAt: 'desc' },
+        include: { candidate: true, template: true },
+      });
+      expect(result).toEqual({ data: [] });
+    });
+
+    it('should return history ordered newest-first with clean fields and no sensitive tokens', async () => {
+      const date1 = new Date('2026-09-16T12:00:00Z');
+      const date2 = new Date('2026-09-16T10:00:00Z');
+
+      const mockRecords = [
+        {
+          id: 'sent-2',
+          candidateId: mockCandidate.id,
+          templateId: mockTemplate.id,
+          fromEmail: mockConnection.email,
+          toEmail: mockCandidate.email,
+          subject: 'Offer for Anna',
+          body: 'Hello Anna',
+          status: EmailStatus.SENT,
+          providerMessageId: 'msg-200',
+          errorMessage: null,
+          createdAt: date1,
+          updatedAt: date1,
+          candidate: mockCandidate,
+          template: mockTemplate,
+        },
+        {
+          id: 'sent-1',
+          candidateId: mockCandidate.id,
+          templateId: mockTemplate.id,
+          fromEmail: mockConnection.email,
+          toEmail: mockCandidate.email,
+          subject: 'Offer for Anna',
+          body: 'Hello Anna',
+          status: EmailStatus.FAILED,
+          providerMessageId: null,
+          errorMessage: 'API Error',
+          createdAt: date2,
+          updatedAt: date2,
+          candidate: mockCandidate,
+          template: mockTemplate,
+        },
+      ];
+
+      mockPrisma.sentEmail.findMany.mockResolvedValue(mockRecords);
+
+      const result = await service.getEmailHistory('default-user');
+
+      expect(mockPrisma.sentEmail.findMany).toHaveBeenCalledWith({
+        orderBy: { createdAt: 'desc' },
+        include: { candidate: true, template: true },
+      });
+
+      expect(result.data).toHaveLength(2);
+      expect(result.data[0].id).toBe('sent-2');
+      expect(result.data[0].status).toBe(EmailStatus.SENT);
+      expect(result.data[0].recipientName).toBe('Anna Ivanova');
+      expect(result.data[0].templateName).toBe('Offer Template');
+      expect(result.data[0].providerMessageId).toBe('msg-200');
+
+      expect(result.data[1].id).toBe('sent-1');
+      expect(result.data[1].status).toBe(EmailStatus.FAILED);
+
+      // Verify no sensitive token or DB internal fields are returned
+      expect(result.data[0]).not.toHaveProperty('accessToken');
+      expect(result.data[0]).not.toHaveProperty('refreshToken');
+      expect(result.data[0]).not.toHaveProperty('tokenType');
+    });
+  });
 });
+

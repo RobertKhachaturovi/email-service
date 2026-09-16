@@ -192,4 +192,33 @@ export class EmailsService {
       );
     }
   }
+
+  async getEmailHistory(userId: string = 'default-user') {
+    const sentEmails = await this.prisma.sentEmail.findMany({
+      orderBy: {
+        createdAt: 'desc',
+      },
+      include: {
+        candidate: true,
+        template: true,
+      },
+    });
+
+    return {
+      data: sentEmails.map((email) => ({
+        id: email.id,
+        toEmail: email.toEmail,
+        recipientName:
+          email.candidate?.fullName ||
+          `${email.candidate?.firstName ?? ''} ${email.candidate?.lastName ?? ''}`.trim() ||
+          undefined,
+        templateName: email.template?.name || undefined,
+        subject: email.subject,
+        status: email.status,
+        createdAt: email.createdAt,
+        providerMessageId: email.providerMessageId,
+      })),
+    };
+  }
 }
+

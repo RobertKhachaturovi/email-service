@@ -7,6 +7,7 @@ describe('EmailsController', () => {
 
   const mockEmailsService = {
     sendEmail: jest.fn(),
+    getEmailHistory: jest.fn(),
   };
 
   beforeEach(async () => {
@@ -41,6 +42,31 @@ describe('EmailsController', () => {
       const result = await controller.sendEmail(dto);
 
       expect(mockEmailsService.sendEmail).toHaveBeenCalledWith(dto, 'default-user');
+      expect(result).toBe(mockResult);
+    });
+  });
+
+  describe('getEmailHistory', () => {
+    it('should delegate getEmailHistory call to service with default-user ID', async () => {
+      const mockResult = {
+        data: [
+          {
+            id: 'sent-1',
+            toEmail: 'anna@example.com',
+            recipientName: 'Anna Ivanova',
+            templateName: 'Offer Template',
+            subject: 'Offer for Anna',
+            status: 'SENT',
+            createdAt: new Date(),
+            providerMessageId: 'msg-123',
+          },
+        ],
+      };
+      mockEmailsService.getEmailHistory.mockResolvedValue(mockResult);
+
+      const result = await controller.getEmailHistory();
+
+      expect(mockEmailsService.getEmailHistory).toHaveBeenCalledWith('default-user');
       expect(result).toBe(mockResult);
     });
   });
