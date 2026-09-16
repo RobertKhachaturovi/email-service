@@ -7,6 +7,8 @@ import {
 import { google } from 'googleapis';
 import { PrismaService } from '../prisma/prisma.service';
 
+const DEFAULT_USER_ID = 'default-user';
+
 @Injectable()
 export class GmailService {
   constructor(private readonly prisma: PrismaService) {}
@@ -26,7 +28,7 @@ export class GmailService {
     return new google.auth.OAuth2(clientId, clientSecret, redirectUri);
   }
 
-  getAuthUrl(userId: string): string {
+  getAuthUrl(userId: string = DEFAULT_USER_ID): string {
     const oauth2Client = this.getOAuth2Client();
     const scopes = [
       'https://www.googleapis.com/auth/userinfo.email',
@@ -48,7 +50,7 @@ export class GmailService {
       throw new BadRequestException('Authorization code is missing from callback query parameters');
     }
 
-    const userId = stateUserId || 'default-user';
+    const userId = stateUserId || DEFAULT_USER_ID;
     const oauth2Client = this.getOAuth2Client();
 
     try {
@@ -88,7 +90,6 @@ export class GmailService {
         success: true,
         message: 'Gmail account connected successfully',
         email: connection.email,
-        userId: connection.userId,
       };
     } catch (error: any) {
       if (error instanceof HttpException) throw error;
@@ -98,7 +99,7 @@ export class GmailService {
     }
   }
 
-  async getStatus(userId: string) {
+  async getStatus(userId: string = DEFAULT_USER_ID) {
     const connection = await this.prisma.gmailConnection.findUnique({
       where: { userId },
       select: {
@@ -119,7 +120,7 @@ export class GmailService {
     };
   }
 
-  async revokeConnection(userId: string) {
+  async revokeConnection(userId: string = DEFAULT_USER_ID) {
     const connection = await this.prisma.gmailConnection.findUnique({
       where: { userId },
     });

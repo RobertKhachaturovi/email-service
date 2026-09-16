@@ -7,13 +7,14 @@ export class EmailPreviewController {
   constructor(private readonly emailPreviewService: EmailPreviewService) {}
 
   @Post(':id/preview')
-  generatePreview(
+  async generatePreview(
     @Param('id') templateId: string,
     @Body() dto: PreviewEmailTemplateDto,
   ) {
-    return this.emailPreviewService.generatePreview(
+    const preview = await this.emailPreviewService.generatePreview(
       templateId,
       dto.candidateId,
     );
+    return { data: preview };
   }
 }

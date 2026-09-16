@@ -18,7 +18,7 @@ describe('CandidatesController', () => {
 
   const mockCandidatesService = {
     findAll: jest.fn().mockResolvedValue({ data: [mockCandidate] }),
-    findOne: jest.fn().mockResolvedValue(mockCandidate),
+    findOne: jest.fn().mockResolvedValue({ data: mockCandidate }),
     create: jest.fn().mockResolvedValue(mockCandidate),
     update: jest.fn().mockResolvedValue({ ...mockCandidate, projectTitle: 'Lead' }),
     remove: jest.fn().mockResolvedValue({ success: true, message: 'Deleted' }),
@@ -49,10 +49,10 @@ describe('CandidatesController', () => {
   });
 
   describe('findOne', () => {
-    it('should return a candidate by id', async () => {
-      mockCandidatesService.findOne.mockResolvedValue(mockCandidate);
+    it('should return a candidate wrapped in data property by id', async () => {
+      mockCandidatesService.findOne.mockResolvedValue({ data: mockCandidate });
       const result = await controller.findOne('cand-1');
-      expect(result).toEqual(mockCandidate);
+      expect(result).toEqual({ data: mockCandidate });
     });
   });
 

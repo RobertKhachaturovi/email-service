@@ -38,7 +38,7 @@ export class CandidatesService {
       throw new NotFoundException(`Candidate with ID "${id}" not found`);
     }
 
-    return candidate;
+    return { data: candidate };
   }
 
   async create(createCandidateDto: CreateCandidateDto) {
