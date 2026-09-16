@@ -166,16 +166,16 @@ export default function CandidateList() {
                 key={candidate.id}
                 className="transition-colors hover:bg-zinc-50/75 dark:hover:bg-zinc-800/50"
               >
-                <td className="whitespace-nowrap px-6 py-4 text-sm font-medium text-zinc-900 dark:text-zinc-100">
+                <td className="max-w-[180px] truncate whitespace-nowrap px-6 py-4 text-sm font-medium text-zinc-900 dark:text-zinc-100">
                   {candidate.fullName || `${candidate.firstName} ${candidate.lastName}`}
                 </td>
-                <td className="whitespace-nowrap px-6 py-4 text-sm text-zinc-600 dark:text-zinc-400">
+                <td className="max-w-[120px] truncate whitespace-nowrap px-6 py-4 text-sm text-zinc-600 dark:text-zinc-400">
                   {candidate.firstName}
                 </td>
-                <td className="whitespace-nowrap px-6 py-4 text-sm text-zinc-600 dark:text-zinc-400">
+                <td className="max-w-[120px] truncate whitespace-nowrap px-6 py-4 text-sm text-zinc-600 dark:text-zinc-400">
                   {candidate.lastName}
                 </td>
-                <td className="whitespace-nowrap px-6 py-4 text-sm text-zinc-600 dark:text-zinc-400">
+                <td className="max-w-[200px] truncate whitespace-nowrap px-6 py-4 text-sm text-zinc-600 dark:text-zinc-400">
                   {candidate.email}
                 </td>
                 <td className="whitespace-nowrap px-6 py-4 text-sm text-zinc-600 dark:text-zinc-400">
