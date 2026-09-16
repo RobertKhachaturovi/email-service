@@ -55,12 +55,12 @@ describe('CandidatesService', () => {
   });
 
   describe('findOne', () => {
-    it('should return a candidate when found', async () => {
+    it('should return a candidate wrapped in data when found', async () => {
       mockPrisma.candidate.findUnique.mockResolvedValue(mockCandidate);
 
       const result = await service.findOne('cand-1');
 
-      expect(result).toEqual(mockCandidate);
+      expect(result).toEqual({ data: mockCandidate });
     });
 
     it('should throw NotFoundException when candidate is missing', async () => {

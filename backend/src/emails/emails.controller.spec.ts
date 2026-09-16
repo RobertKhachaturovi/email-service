@@ -24,7 +24,7 @@ describe('EmailsController', () => {
   });
 
   describe('sendEmail', () => {
-    it('should delegate sendEmail call to service with correct userId', async () => {
+    it('should delegate sendEmail call to service with default-user ID', async () => {
       const dto = { candidateId: 'cand-1', templateId: 'tmpl-1' };
       const mockResult = {
         data: {
@@ -38,19 +38,10 @@ describe('EmailsController', () => {
       };
       mockEmailsService.sendEmail.mockResolvedValue(mockResult);
 
-      const result = await controller.sendEmail(dto, 'custom-user');
-
-      expect(mockEmailsService.sendEmail).toHaveBeenCalledWith(dto, 'custom-user');
-      expect(result).toBe(mockResult);
-    });
-
-    it('should use default-user if x-user-id header is missing', async () => {
-      const dto = { candidateId: 'cand-1', templateId: 'tmpl-1' };
-      mockEmailsService.sendEmail.mockResolvedValue({});
-
-      await controller.sendEmail(dto, undefined);
+      const result = await controller.sendEmail(dto);
 
       expect(mockEmailsService.sendEmail).toHaveBeenCalledWith(dto, 'default-user');
+      expect(result).toBe(mockResult);
     });
   });
 });

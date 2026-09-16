@@ -33,12 +33,12 @@ describe('EmailPreviewController', () => {
   });
 
   describe('generatePreview', () => {
-    it('should delegate preview generation to service with templateId from param and candidateId from body', async () => {
+    it('should delegate preview generation to service and return wrapped in data object', async () => {
       const templateId = 'tmpl-456';
       const dto = { candidateId: 'cand-123' };
       const result = await controller.generatePreview(templateId, dto);
 
-      expect(result).toEqual(mockPreviewResult);
+      expect(result).toEqual({ data: mockPreviewResult });
       expect(mockService.generatePreview).toHaveBeenCalledWith(
         templateId,
         dto.candidateId,

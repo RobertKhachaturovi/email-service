@@ -3,12 +3,13 @@ import {
   Get,
   Delete,
   Query,
-  Headers,
   Res,
   BadRequestException,
 } from '@nestjs/common';
 import type { Response } from 'express';
 import { GmailService } from './gmail.service';
+
+const DEFAULT_USER_ID = 'default-user';
 
 @Controller('gmail')
 export class GmailController {
@@ -16,13 +17,10 @@ export class GmailController {
 
   @Get('connect')
   connect(
-    @Query('userId') queryUserId?: string,
     @Query('json') json?: string,
-    @Headers('x-user-id') headerUserId?: string,
     @Res({ passthrough: true }) res?: Response,
   ) {
-    const userId = queryUserId || headerUserId || 'default-user';
-    const authUrl = this.gmailService.getAuthUrl(userId);
+    const authUrl = this.gmailService.getAuthUrl(DEFAULT_USER_ID);
 
     if (json === 'true') {
       return { url: authUrl };
@@ -48,20 +46,12 @@ export class GmailController {
   }
 
   @Get('status')
-  async getStatus(
-    @Query('userId') queryUserId?: string,
-    @Headers('x-user-id') headerUserId?: string,
-  ) {
-    const userId = queryUserId || headerUserId || 'default-user';
-    return this.gmailService.getStatus(userId);
+  async getStatus() {
+    return this.gmailService.getStatus(DEFAULT_USER_ID);
   }
 
   @Delete('connection')
-  async disconnect(
-    @Query('userId') queryUserId?: string,
-    @Headers('x-user-id') headerUserId?: string,
-  ) {
-    const userId = queryUserId || headerUserId || 'default-user';
-    return this.gmailService.revokeConnection(userId);
+  async disconnect() {
+    return this.gmailService.revokeConnection(DEFAULT_USER_ID);
   }
 }
