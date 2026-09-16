@@ -37,7 +37,7 @@ export default function EmailPreviewCard() {
     setTemplatesError(null);
     try {
       const data = await getEmailTemplates();
-      setTemplates(data);
+      setTemplates(Array.isArray(data) ? data : []);
     } catch (err: unknown) {
       if (err instanceof ApiError || err instanceof Error) {
         setTemplatesError(err.message);
@@ -54,7 +54,7 @@ export default function EmailPreviewCard() {
     setCandidatesError(null);
     try {
       const data = await getCandidates();
-      setCandidates(data);
+      setCandidates(Array.isArray(data) ? data : []);
     } catch (err: unknown) {
       if (err instanceof ApiError || err instanceof Error) {
         setCandidatesError(err.message);
@@ -76,8 +76,8 @@ export default function EmailPreviewCard() {
           getCandidates(),
         ]);
         if (isMounted) {
-          setTemplates(templatesData);
-          setCandidates(candidatesData);
+          setTemplates(Array.isArray(templatesData) ? templatesData : []);
+          setCandidates(Array.isArray(candidatesData) ? candidatesData : []);
           setTemplatesError(null);
           setCandidatesError(null);
         }

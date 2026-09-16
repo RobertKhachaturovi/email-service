@@ -13,7 +13,7 @@ export default function EmailHistoryList() {
     setError(null);
     try {
       const data = await getEmailHistory();
-      setHistory(data);
+      setHistory(Array.isArray(data) ? data : []);
     } catch (err: unknown) {
       if (err instanceof ApiError || err instanceof Error) {
         setError(err.message);
@@ -32,7 +32,7 @@ export default function EmailHistoryList() {
       try {
         const data = await getEmailHistory();
         if (isMounted) {
-          setHistory(data);
+          setHistory(Array.isArray(data) ? data : []);
           setError(null);
         }
       } catch (err: unknown) {
